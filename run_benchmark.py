@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 import typer
 from rich import print
-from src.reflexion_lab.agents import ReActAgent, ReflexionAgent
+from src.reflexion_lab.agents import LATSAgent, ReActAgent, ReflexionAgent
 from src.reflexion_lab.reporting import build_report, save_report
 from src.reflexion_lab.utils import load_dataset, save_jsonl
 app = typer.Typer(add_completion=False)
@@ -13,6 +13,7 @@ def main(dataset: str = "data/hotpot_mini.json", out_dir: str = "outputs/sample_
     examples = load_dataset(dataset)
     react = ReActAgent()
     reflexion = ReflexionAgent(max_attempts=reflexion_attempts)
+    lats = LATSAgent(max_attempts=reflexion_attempts, branches=2)
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
     react_jsonl = out_path / "react_runs.jsonl"
@@ -35,8 +36,18 @@ def main(dataset: str = "data/hotpot_mini.json", out_dir: str = "outputs/sample_
             reflexion_records.append(record)
             f.write(record.model_dump_json() + "\n")
             f.flush()
-    all_records = react_records + reflexion_records
-    report = build_report(all_records, dataset_name=Path(dataset).name, mode="mock")
+
+    lats_records = []
+    with (out_path / "lats_runs.jsonl").open("w", encoding="utf-8") as f:
+        for i, example in enumerate(examples, 1):
+            print(f"[LATS] {i}/{len(examples)}: {example.question[:60]}...")
+            record = lats.run(example)
+            lats_records.append(record)
+            f.write(record.model_dump_json() + "\n")
+            f.flush()
+
+    all_records = react_records + reflexion_records + lats_records
+    report = build_report(all_records, dataset_name=Path(dataset).name, mode="real")
     json_path, md_path = save_report(report, out_path)
     print(f"[green]Saved[/green] {json_path}")
     print(f"[green]Saved[/green] {md_path}")
