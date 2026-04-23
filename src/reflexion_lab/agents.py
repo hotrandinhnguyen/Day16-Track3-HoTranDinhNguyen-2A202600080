@@ -1,9 +1,11 @@
 from __future__ import annotations
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from typing import Literal
 from .real_runtime import actor_answer, evaluator, reflector
 from .mock_runtime import FAILURE_MODE_BY_QID
 from .schemas import AttemptTrace, QAExample, ReflectionEntry, RunRecord
+from .utils import partial_score
 
 @dataclass
 class BaseAgent:
@@ -77,36 +79,34 @@ class LATSAgent:
                              token_estimate=attempt_tokens, latency_ms=attempt_latency)
         traces.append(trace)
 
-        # Branching attempts
+        # Branching attempts — parallel + partial score selection
+        def run_branch(_b: int):
+            refl, ref_tok, ref_lat = reflector(example, 0, current_judge, wrong_answer=final_answer)
+            b_ans, ba_tok, ba_lat = actor_answer(example, 0, "lats", [refl.next_strategy])
+            b_jdg, be_tok, be_lat = evaluator(example, b_ans)
+            return b_ans, b_jdg, refl, ref_tok + ba_tok + be_tok, ref_lat + ba_lat + be_lat
+
         for attempt_id in range(2, self.max_attempts + 1):
             if final_score == 1:
                 break
 
-            best_answer = final_answer
-            best_judge = current_judge
-            best_reflection = None
-            branch_tokens = 0
-            branch_latency = 0
+            with ThreadPoolExecutor(max_workers=self.branches) as ex:
+                results = [f.result() for f in as_completed(ex.submit(run_branch, b) for b in range(self.branches))]
 
-            for _ in range(self.branches):
-                refl, ref_tokens, ref_latency = reflector(example, attempt_id, current_judge, wrong_answer=final_answer)
-                branch_tokens += ref_tokens
-                branch_latency += ref_latency
-
-                b_answer, ba_tokens, ba_latency = actor_answer(example, attempt_id, "lats", [refl.next_strategy])
-                b_judge, be_tokens, be_latency = evaluator(example, b_answer)
-                branch_tokens += ba_tokens + be_tokens
-                branch_latency += ba_latency + be_latency
-
-                if best_reflection is None:
-                    best_answer, best_judge, best_reflection = b_answer, b_judge, refl
-
-                if b_judge.score == 1:
-                    best_answer, best_judge, best_reflection = b_answer, b_judge, refl
-                    break
-
+            branch_tokens = sum(r[3] for r in results)
+            branch_latency = max(r[4] for r in results)
             total_tokens += branch_tokens
             total_latency += branch_latency
+
+            correct = [(a, j, r) for a, j, r, _, _ in results if j.score == 1]
+            if correct:
+                best_answer, best_judge, best_reflection = correct[0]
+            else:
+                best_answer, best_judge, best_reflection = max(
+                    [(a, j, r) for a, j, r, _, _ in results],
+                    key=lambda x: partial_score(x[0], example.gold_answer)
+                )
+
             reflections.append(best_reflection)
             final_answer = best_answer
             final_score = best_judge.score

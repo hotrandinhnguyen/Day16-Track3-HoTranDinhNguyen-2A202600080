@@ -8,3 +8,6 @@ env/
 .env
 .pytest_cache/
 .DS_Store
+app/frontend/node_modules/
+app/frontend/dist/
+app/

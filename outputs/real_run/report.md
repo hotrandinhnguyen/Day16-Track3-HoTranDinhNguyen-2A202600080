@@ -26,12 +26,12 @@
     "wrong_final_answer": 13
   },
   "lats": {
-    "none": 86,
-    "wrong_final_answer": 14
+    "none": 85,
+    "wrong_final_answer": 15
   },
   "combined": {
-    "none": 247,
-    "wrong_final_answer": 53
+    "none": 246,
+    "wrong_final_answer": 54
   }
 }
 ```
