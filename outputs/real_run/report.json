@@ -26,10 +26,10 @@
     },
     "lats": {
       "count": 100,
-      "em": 0.86,
-      "avg_attempts": 1.44,
-      "avg_token_estimate": 3378.81,
-      "avg_latency_ms": 5825.43
+      "em": 0.85,
+      "avg_attempts": 1.4,
+      "avg_token_estimate": 3349.85,
+      "avg_latency_ms": 4068.27
     },
     "delta_reflexion_minus_react": {
       "em_abs": 0.13,
@@ -48,12 +48,12 @@
       "wrong_final_answer": 13
     },
     "lats": {
-      "none": 86,
-      "wrong_final_answer": 14
+      "none": 85,
+      "wrong_final_answer": 15
     },
     "combined": {
-      "none": 247,
-      "wrong_final_answer": 53
+      "none": 246,
+      "wrong_final_answer": 54
     }
   },
   "examples": [
@@ -2071,7 +2071,7 @@
       "qid": "hq2",
       "agent_type": "lats",
       "gold_answer": "Chief of Protocol",
-      "predicted_answer": "Ambassador",
+      "predicted_answer": "Shirley Temple Black",
       "is_correct": false,
       "attempts": 3,
       "failure_mode": "wrong_final_answer",
@@ -2101,7 +2101,7 @@
       "qid": "hq5",
       "agent_type": "lats",
       "gold_answer": "Greenwich Village, New York City",
-      "predicted_answer": "Greenwich Village",
+      "predicted_answer": "Greenwich Village, New York City",
       "is_correct": true,
       "attempts": 1,
       "failure_mode": "none",
@@ -2141,10 +2141,10 @@
       "qid": "hq9",
       "agent_type": "lats",
       "gold_answer": "Terry Richardson",
-      "predicted_answer": "Terry Richardson",
-      "is_correct": true,
+      "predicted_answer": "Annie Morton",
+      "is_correct": false,
       "attempts": 3,
-      "failure_mode": "none",
+      "failure_mode": "wrong_final_answer",
       "reflection_count": 2
     },
     {
@@ -2271,17 +2271,17 @@
       "qid": "hq22",
       "agent_type": "lats",
       "gold_answer": "Sonic",
-      "predicted_answer": "Sonic",
-      "is_correct": true,
+      "predicted_answer": "Miles \"Tails\" Prower",
+      "is_correct": false,
       "attempts": 3,
-      "failure_mode": "none",
+      "failure_mode": "wrong_final_answer",
       "reflection_count": 2
     },
     {
       "qid": "hq23",
       "agent_type": "lats",
       "gold_answer": "keyboard function keys",
-      "predicted_answer": "keyboard function keys",
+      "predicted_answer": "Front Row, keyboard function keys",
       "is_correct": true,
       "attempts": 2,
       "failure_mode": "none",
@@ -2371,7 +2371,7 @@
       "qid": "hq32",
       "agent_type": "lats",
       "gold_answer": "Fujioka, Gunma",
-      "predicted_answer": "Fujioka, Gunma, Japan",
+      "predicted_answer": "Japan, Fujioka",
       "is_correct": true,
       "attempts": 2,
       "failure_mode": "none",
@@ -2382,10 +2382,10 @@
       "agent_type": "lats",
       "gold_answer": "Charles Eug\u00e8ne",
       "predicted_answer": "Charles Nungesser",
-      "is_correct": true,
-      "attempts": 2,
-      "failure_mode": "none",
-      "reflection_count": 1
+      "is_correct": false,
+      "attempts": 3,
+      "failure_mode": "wrong_final_answer",
+      "reflection_count": 2
     },
     {
       "qid": "hq34",
@@ -2413,9 +2413,9 @@
       "gold_answer": "October 1922",
       "predicted_answer": "October 1922",
       "is_correct": true,
-      "attempts": 3,
+      "attempts": 2,
       "failure_mode": "none",
-      "reflection_count": 2
+      "reflection_count": 1
     },
     {
       "qid": "hq37",
@@ -2481,11 +2481,11 @@
       "qid": "hq43",
       "agent_type": "lats",
       "gold_answer": "1962",
-      "predicted_answer": "Masakazu Katsura",
-      "is_correct": false,
-      "attempts": 3,
-      "failure_mode": "wrong_final_answer",
-      "reflection_count": 2
+      "predicted_answer": "1962",
+      "is_correct": true,
+      "attempts": 1,
+      "failure_mode": "none",
+      "reflection_count": 0
     },
     {
       "qid": "hq44",
@@ -2881,11 +2881,11 @@
       "qid": "hq83",
       "agent_type": "lats",
       "gold_answer": "Conscription",
-      "predicted_answer": "requiring only men to register for the draft",
-      "is_correct": false,
-      "attempts": 3,
-      "failure_mode": "wrong_final_answer",
-      "reflection_count": 2
+      "predicted_answer": "draft",
+      "is_correct": true,
+      "attempts": 2,
+      "failure_mode": "none",
+      "reflection_count": 1
     },
     {
       "qid": "hq84",
@@ -3043,9 +3043,9 @@
       "gold_answer": "Beijing",
       "predicted_answer": "Beijing",
       "is_correct": true,
-      "attempts": 3,
+      "attempts": 2,
       "failure_mode": "none",
-      "reflection_count": 2
+      "reflection_count": 1
     },
     {
       "qid": "hq100",
