@@ -31,6 +31,37 @@ python autograde.py --report-path outputs/sample_run/report.json
 - **80% số điểm (80 điểm)**: Hoàn thiện đúng và đủ luồng (flow) cho Reflexion Agent, chạy thành công với LLM thật và dataset thật.
 - **20% số điểm (20 điểm)**: Thực hiện thêm ít nhất một trong các phần **Bonus** được nhắc đến trong mã nguồn (ví dụ: `structured_evaluator`, `reflection_memory`, `adaptive_max_attempts`, `memory_compression`, v.v. - xem chi tiết tại `autograde.py`).
 
+## 5. Bonus: Mini-LATS Branching
+
+Ngoài ReAct và Reflexion, lab này implement thêm **Mini-LATS** (Language Agent Tree Search) để so sánh.
+
+### Khác biệt so với Reflexion
+
+| | Reflexion | Mini-LATS |
+|---|---|---|
+| Số nhánh mỗi attempt | 1 | 2 (branches=2) |
+| Chiến thuật retry | 1 reflection → 1 attempt | N reflections → N attempts song song, chọn tốt nhất |
+| Token cost | Trung bình | Cao hơn (~2-3x Reflexion) |
+
+### Flow của Mini-LATS
+
+```
+Attempt 1: Actor → Evaluator
+  └─ Nếu sai:
+       Branch 1: Reflector → Actor → Evaluator
+       Branch 2: Reflector → Actor → Evaluator
+       → Chọn nhánh đúng (nếu có) hoặc nhánh tốt nhất
+  └─ Lặp lại tối đa max_attempts lần
+```
+
+### Cách chạy so sánh cả 3 agent
+
+```bash
+python run_benchmark.py --dataset data/hotpotqa_100.json --out-dir outputs/real_run
+```
+
+Kết quả sẽ bao gồm `react`, `reflexion`, `lats` trong cùng `report.json`.
+
 ## Thành phần mã nguồn
 - `src/reflexion_lab/schemas.py`: Định nghĩa các kiểu dữ liệu trace, record.
 - `src/reflexion_lab/prompts.py`: Nơi chứa các template prompt cho Actor, Evaluator và Reflector.
